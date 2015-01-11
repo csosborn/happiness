@@ -12,7 +12,7 @@ router.post('/:type/:key', function(req, res) {
         return;
     }
 
-    ingestor(req.body).forEach(System.ingest.bind(System));
+    ingestor(req).forEach(System.ingest.bind(System));
 
     res.send(req.params);
 });
