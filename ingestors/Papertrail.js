@@ -5,6 +5,8 @@
 
 "use strict";
 
+var util = require('util');
+
 /**
  * Takes a POST body and processes it into an array of messages.
  *
