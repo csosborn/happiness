@@ -17,6 +17,8 @@ var process = function (body) {
 
     return payload.events.map(function (event) {
 
+        console.log("received papertrail event: " + util.inspect(event, {depth: null}));
+
         return {
             environment: event.facility,
             service: event.program,
