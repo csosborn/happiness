@@ -1,15 +1,215 @@
+<!DOCTYPE html>
 <html>
-	<head>
-		<script src="/socket.io/socket.io.js"></script>
-		<script>
-		  var socket = io('http://192.168.1.145:1080');
-		  socket.on('config', function (data) {
-		    console.log(data);
-		  });
-		</script>
-	</head>
-	<body>
-	</body>
+<head>
+    <title>Happiness</title>
+    <style type="text/css">
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: sans-serif;
+            background: #000;
+        }
+
+            /*
+            EmojiSymbols Font (c)blockworks - Kenichi Kaneko
+            http://emojisymbols.com/
+            */
+        @font-face {
+            font-family: "EmojiSymbols";
+            src: url('public/fonts/EmojiSymbols-Regular.woff') format('woff');
+            text-decoration: none;
+            font-style: normal;
+        }
+
+        body.happy {
+        }
+
+        body.unhappy {
+            background: #ff0220;
+        }
+
+        #checks {
+            margin: 0 auto;
+            font-size: 24pt;
+            border-collapse: separate;
+            border-spacing: 0 0.5em;
+            width: 90%;
+        }
+
+        #checks th {
+            font-family: EmojiSymbols, sans-serif;
+            font-size: 48pt;
+            text-align: center;
+            padding: 10px 0;
+            font-weight: normal;
+            color: #00ff2d;
+        }
+
+        #checks td {
+            text-align: center;
+            padding-bottom: 5px;
+        }
+
+        #checks td.error {
+            background: rgba(255,45,45,0.4);
+        }
+
+        #checks .env {
+            background: linear-gradient(0, rgba(0,255,45,0.1), rgba(0,255,45,0.2));
+            border: 8px solid #000;
+        }
+
+        #checks .env .name {
+            background: linear-gradient(0, rgba(0,255,45,0.7), #00ff2d);
+            color: rgba(0,0,0,0.7);
+            padding: 0 15px 0 25px;
+            border: 0 none;
+            font-weight: bold;
+            text-align: left;
+            border-radius: 30px 0 0 30px;
+        }
+
+        #checks .env.error {
+            background: linear-gradient(0, rgba(255,45,45,0.1), rgba(255,45,45,0.2));
+        }
+
+        #checks .env.error .name {
+            background: linear-gradient(0, rgba(255,45,45,0.4), #ff2d2d);
+        }
+
+        .check {
+            margin: 0;
+            border-radius: 25px;
+            padding: 5px 9px;
+            display: inline-block;
+            font-size: 14pt;
+            color: #00ff2d;
+        }
+
+        .check.error {
+            color: rgba(255,45,45,1);
+            border: 1px solid;
+        }
+
+    </style>
+</head>
+<body class="happy">
 
 
+<!--div id="status">&#x1F60E;</div><!--&#x1F31A;</div-->
+
+<table id="checks">
+    <thead>
+    <tr>
+        <th>OK</th>
+
+        <!--th>&#x1F369;</th>
+        <th>&#x1F459;</th>
+        <th class="error">&#x1F335;</th>
+        <th>&#x1F52B;</th>
+        <th>&#x1F415;</th>
+
+        <th>&#x1F400;</th>
+        <th>&#x260E;</th>
+        <th>&#x1F5FF;</th>
+        <th>&#x1F648;</th>
+        <th>&#x1F4EF;</th-->
+    </tr>
+    </thead>
+    <tbody>
+    <!--tr class="env">
+        <td class="name">Production</td>
+        <td>
+            <span class="check">&#x2713;</span><span class="check">&#x2713;</span><span class="check">&#x2713;</span>
+        </td>
+        <td>
+            <span class="check">&#x2713;</span><span class="check">&#x2713;</span>
+        </td>
+        <td>
+            <span class="check">&#x2713;</span><span class="check">&#x2713;</span><span class="check">&#x2713;</span>
+        </td>
+        <td>
+            <span class="check">&#x2713;</span><span class="check">&#x2713;</span><span class="check">&#x2713;</span><span class="check">&#x2713;</span><span class="check">&#x2713;</span>
+        </td>
+        <td>
+            <span class="check">&#x2713;</span><span class="check">&#x2713;</span><span class="check">&#x2713;</span><span class="check">&#x2713;</span>
+        </td>
+        <td>
+            <span class="check">&#x2713;</span><span class="check">&#x2713;</span><span class="check">&#x2713;</span>
+        </td>
+        <td>
+            <span class="check">&#x2713;</span><span class="check">&#x2713;</span>
+        </td>
+        <td>
+            <span class="check">&#x2713;</span><span class="check">&#x2713;</span><span class="check">&#x2713;</span>
+        </td>
+        <td>
+            <span class="check">&#x2713;</span><span class="check">&#x2713;</span><span class="check">&#x2713;</span><span class="check">&#x2713;</span><span class="check">&#x2713;</span>
+        </td>
+        <td>
+            <span class="check">&#x2713;</span><span class="check">&#x2713;</span><span class="check">&#x2713;</span><span class="check">&#x2713;</span>
+        </td>
+    </tr>
+    <tr class="env error">
+        <td class="name">Demo</td>
+        <td>
+            <span class="check">&#x2713;</span><span class="check">&#x2713;</span><span class="check">&#x2713;</span>
+        </td>
+        <td>
+            <span class="check">&#x2713;</span><span class="check">&#x2713;</span>
+        </td>
+        <td class="error">
+            <span class="check ">&#x2713;</span><span class="check">&#x2713;</span><span class="check error">&#x1F7A9;</span>
+        </td>
+        <td>
+            <span class="check">&#x2713;</span><span class="check">&#x2713;</span><span class="check">&#x2713;</span><span class="check">&#x2713;</span><span class="check">&#x2713;</span>
+        </td>
+        <td>
+            <span class="check">&#x2713;</span><span class="check">&#x2713;</span><span class="check">&#x2713;</span><span class="check">&#x2713;</span>
+        </td>
+        <td>
+            <span class="check">&#x2713;</span><span class="check">&#x2713;</span><span class="check">&#x2713;</span>
+        </td>
+        <td>
+            <span class="check">&#x2713;</span><span class="check">&#x2713;</span>
+        </td>
+        <td>
+            <span class="check">&#x2713;</span><span class="check">&#x2713;</span><span class="check">&#x2713;</span>
+        </td>
+        <td>
+            <span class="check">&#x2713;</span><span class="check">&#x2713;</span><span class="check">&#x2713;</span><span class="check">&#x2713;</span><span class="check">&#x2713;</span>
+        </td>
+        <td>
+            <span class="check">&#x2713;</span><span class="check">&#x2713;</span><span class="check">&#x2713;</span><span class="check">&#x2713;</span>
+        </td>
+    </tr-->
+    </tbody>
+</table>
+
+
+<script src="http://code.jquery.com/jquery-2.1.0.min.js"></script>
+<script src="http://code.jquery.com/color/jquery.color-2.1.2.min.js"></script>
+
+<script src="/public/js/System.js"></script>
+<script src="/public/js/Process.js"></script>
+<script src="http://192.168.1.145:1080/socket.io/socket.io.js"></script>
+<script>
+
+    var socket = io('http://192.168.1.145:1080/');
+
+    var system = new System();
+
+    socket.on('config', function (config) {
+        system.addConfig(config);
+    });
+
+    socket.on('news', function (item) {
+        console.log(item);
+        system.setError(item.environment, item.service, item.message);
+    });
+
+</script>
+
+</body>
 </html>
