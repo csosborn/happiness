@@ -1,0 +1,15 @@
+<html>
+	<head>
+		<script src="/socket.io/socket.io.js"></script>
+		<script>
+		  var socket = io('http://192.168.1.145:1080');
+		  socket.on('config', function (data) {
+		    console.log(data);
+		  });
+		</script>
+	</head>
+	<body>
+	</body>
+
+
+</html>
