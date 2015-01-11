@@ -80,4 +80,9 @@ System.prototype.setError = function (env, service, message) {
 
     var envId = this.environments[env];
     var serviceId = this.services[service];
+
+    var element = $('#env-' + envId).find('td.service-' + serviceId + ' .errorFlag');
+
+    console.log(element);
+    element.text(message);
 };

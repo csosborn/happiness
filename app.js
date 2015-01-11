@@ -5,11 +5,11 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var _ = require('underscore');
-
 var when = require('when');
 
 var routes = require('./routes/index');
-var users = require('./routes/users');
+var ingest = require('./routes/ingest');
+var update = require('./routes/update');
 
 var System = require('./models/System.js');
 
@@ -32,8 +32,9 @@ app.use(cookieParser());
 app.use(require('less-middleware')(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, 'public')));
 
-//app.use('/', routes);
-//app.use('/users', users);
+app.use('/', routes);
+app.use('/ingest', ingest);
+app.use('/update', update);
 
 /// catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -67,12 +68,11 @@ app.use(function(err, req, res, next) {
 });
 
 var systemConfig = {};
-var system = new System(systemConfig);
 
 io.on('connection', function (socket) {
     console.log("connected!");
 
-    when.all([system.getEnvironments(), system.getServices(), system.getErrors()]).spread(
+    when.all([System.getEnvironments(), System.getServices(), System.getErrors()]).spread(
         function (environments, services, errors) {
             _.each(_.flatten([environments, services]), function(object) {
                 socket.emit('config', object);
@@ -85,7 +85,7 @@ io.on('connection', function (socket) {
 
 });
 
-system.getNews().on('serviceError', function(obj) {
+System.getNews().on('serviceError', function(obj) {
     io.emit('news', obj);
 });
 
