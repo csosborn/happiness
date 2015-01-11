@@ -6,36 +6,36 @@ var EventEmitter = require('events').EventEmitter;
 
 function System(configOptions) {
 	this.services = [
-    	{ type: "service", name: "Glaze", glyph: "&#x1F369;" },
-    	{ type: "service", name: "Frisk", glyph: "&#x1F52B;" },
-    	{ type: "service", name: "Yorkie", glyph: "&#x1F415;" },
-    	{ type: "service", name: "Torii", glyph: "&#x1F6A7;" }
-  	];
+		{ type: "service", name: "Glaze", glyph: "&#x1F369;" },
+		{ type: "service", name: "Frisk", glyph: "&#x1F52B;" },
+		{ type: "service", name: "Yorkie", glyph: "&#x1F415;" },
+		{ type: "service", name: "Torii", glyph: "&#x1F6A7;" }
+	];
   	this.environments = [
-	    { type: "environment", name: "Production" },
-    	{ type: "environment", name: "Demo" },
-    	{ type: "environment", name: "Staging" },
-    	{ type: "environment", name: "Integration" },
-    	{ type: "environment", name: "Investor" },
-    	{ type: "environment", name: "Corral" }
-  	];
-  	this.errors = [];
+  		{ type: "environment", name: "Production" },
+		{ type: "environment", name: "Demo" },
+		{ type: "environment", name: "Staging" },
+		{ type: "environment", name: "Integration" },
+		{ type: "environment", name: "Investor" },
+		{ type: "environment", name: "Corral" }
+	];
+	this.errors = [];
 
-  	this.newsEmitter = new EventEmitter();
+	this.newsEmitter = new EventEmitter();
 
-  	setInterval(_.bind(this._simulateError, this), 100);
+	setInterval(_.bind(this._simulateError, this), 100);
 };
 
 System.prototype.getServices = function ()  {
-  return when(this.services);	
+	return when(this.services);	
 };
 
 System.prototype.getEnvironments = function ()  {
-  return when(this.environments);
+	return when(this.environments);
 };
 
 System.prototype.getErrors = function ()  {
-  return when(this.errors);
+	return when(this.errors);
 };
 
 System.prototype.getNews = function () {
