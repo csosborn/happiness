@@ -187,29 +187,10 @@
     </tbody>
 </table>
 
+<script src="/src/require_config.js"></script>
+<script src="/src/libs/require.js" data-main="src/Main"></script>
 
-<script src="http://code.jquery.com/jquery-2.1.0.min.js"></script>
-<script src="http://code.jquery.com/color/jquery.color-2.1.2.min.js"></script>
-
-<script src="/src/System.js"></script>
-<script src="/src/Process.js"></script>
-<script src="/socket.io/socket.io.js"></script>
-<script>
-
-    var socket = io();
-
-    var system = new System();
-
-    socket.on('config', function (config) {
-        system.addConfig(config);
-    });
-
-    socket.on('news', function (item) {
-        console.log(item);
-        system.setError(item.environment, item.service, item.message);
-    });
-
-</script>
+<!-- <script src="http://code.jquery.com/color/jquery.color-2.1.2.min.js"></script> -->
 
 </body>
 </html>

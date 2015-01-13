@@ -3,86 +3,84 @@
  * 1/10/15
  */
 
-"use strict";
+define([ 'jquery' ], function ($) {
+    "use strict";
 
+    var System = function () {
 
-window.System = function () {
+        this.numEnvs = 0;
+        this.numServices = 0;
 
-    this.numEnvs = 0;
-    this.numServices = 0;
+        this.environments = {};
+        this.services = {};
+    };
 
-    this.environments = {};
-    this.services = {};
-};
+    System.prototype.addConfig = function (config) {
 
-System.prototype.addConfig = function (config) {
+        console.log(config);
 
-    console.log(config);
+        if (config.type == 'environment') {
+            this.addEnvironment(config.name);
+        }
+        else if (config.type == 'service') {
+            this.addService(config.name, config.glyph);
+        }
+    };
 
-    if (config.type == 'environment') {
-        this.addEnvironment(config.name);
-    }
-    else if (config.type == 'service') {
-        this.addService(config.name, config.glyph);
-    }
-};
+    System.prototype.addEnvironment = function (name) {
 
-System.prototype.addEnvironment = function (name) {
+        if (this.environments[name] !== undefined) {
+            return;
+        }
 
-    if (this.environments[name] !== undefined) {
-        return;
-    }
+        console.log('adding environment ' + name);
 
-    console.log('adding environment ' + name);
+        // assign the environment a local ID
+        var id = this.numEnvs;
+        this.environments[name] = id;
+        this.numEnvs++;
 
-    // assign the environment a local ID
-    var id = this.numEnvs;
-    this.environments[name] = id;
-    this.numEnvs++;
+        // add a row to the table
 
-    // add a row to the table
+        var html = '<tr class="env" id="env-' + id + '"><td class="name">' + name + '</td>';
 
-    var html = '<tr class="env" id="env-' + id + '"><td class="name">' + name + '</td>';
+        for (var key in this.services) {
+            html += '<td class="service-' + this.services[key] + '"><span class="errorFlag"></span></td>';
+        }
 
-    for (var key in this.services) {
-        html += '<td class="service-' + this.services[key] + '"><span class="errorFlag"></span></td>';
-    }
+        html += '</tr>';
 
-    html += '</tr>';
+        $('#checks').find('tbody').append(html);
+    };
 
-    $('#checks').find('tbody').append(html);
-};
+    System.prototype.addService = function (name, glyph) {
 
-System.prototype.addService = function (name, glyph) {
+        if (this.services[name] !== undefined) {
+            return;
+        }
 
-    if (this.services[name] !== undefined) {
-        return;
-    }
+        console.log('adding service ' + name);
 
-    console.log('adding service ' + name);
+        // assign the service a local ID
+        var id = this.numServices;
+        this.services[name] = id;
+        this.numServices++;
 
-    // assign the service a local ID
-    var id = this.numServices;
-    this.services[name] = id;
-    this.numServices++;
+        // add a header
+        $('#checks').find('thead tr').append('<th>' + glyph + '</th>');
 
-    // add a header
-    $('#checks').find('thead tr').append('<th>' + glyph + '</th>');
+        // add a column to each env
+        // factor this so we only do it in one place
+        $('.env').each(function () {
+            $(this).append('<td class="service-' + id + '"><span class="errorFlag"></span></td>');
+        });
+    };
 
-    // add a column to each env
-    // factor this so we only do it in one place
-    $('.env').each(function () {
-        $(this).append('<td class="service-' + id + '"><span class="errorFlag"></span></td>');
-    });
-};
+    System.prototype.setError = function (env, service, message) {
 
-System.prototype.setError = function (env, service, message) {
+        var envId = this.environments[env];
+        var serviceId = this.services[service];
+    };
 
-    var envId = this.environments[env];
-    var serviceId = this.services[service];
-
-    var element = $('#env-' + envId).find('td.service-' + serviceId + ' .errorFlag');
-
-    console.log(element);
-    element.text(message);
-};
+    return System;
+});
