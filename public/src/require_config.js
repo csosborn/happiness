@@ -10,6 +10,8 @@ var require = {
     wrap: false,
     paths: {
         socketio: '/socket.io/socket.io',
-        jquery: 'libs/jquery'
+        jquery: 'libs/jquery',
+        backbone: 'libs/backbone',
+        underscore: 'libs/underscore'
     }
 };
