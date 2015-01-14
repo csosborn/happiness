@@ -8,7 +8,7 @@ define([ "socketio", "System", "views/Dashboard" ], function (io, System, Dashbo
         model: system
     })
 
-    var socket = io('http://localhost:3000/');
+    var socket = io();
 
     socket.on('config', function (config) {
         system.addConfig(config);
