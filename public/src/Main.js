@@ -4,9 +4,10 @@ define([ "socketio", "System", "views/Dashboard" ], function (io, System, Dashbo
     var system = new System();
 
     var dashboard = new Dashboard({
-        el: '#checks',
+        el: 'body',
         model: system
-    })
+    });
+    dashboard.render();
 
     var socket = io();
 
