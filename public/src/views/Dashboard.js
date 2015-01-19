@@ -1,51 +1,64 @@
-define([ 'backbone', 'jquery', 'hbs!templates/dashboard' ], 
-    function (Backbone, $, dashboard) {
+/**
+ * The Happiness dashboard view.
+ */
+
+define(
+    [   'backbone', 
+        'hbs!templates/dashboard', 
+        'views/HappinessSummary', 'views/ProcessTable'
+    ], 
+    function (
+        Backbone, 
+        dashboard, 
+        HappinessSummaryView, ProcessTableView
+    ) {
         "use strict";
 
         return Backbone.View.extend({
 
-            initialize: function (options) {
-                this.listenTo(this.model.environments, 'add', this.onAddEnvironment);
-                this.listenTo(this.model.services, 'add', this.onAddService);
-            },
-
-            onAddEnvironment: function (environment) {
-
-                console.log('adding environment ' + environment.get('name'));
-
-                // add a row to the table
-                var id = environment.cid;
-                var name = environment.get('name');
-
-                var html = '<tr class="env" id="env-' + id + '"><td class="name">' + name + '</td>';
-
-                this.model.services.each(
-                    function (service) {
-                        html += '<td class="service-' + service.cid + '"><span class="errorFlag"></span></td>';
-                    }
-                );
-
-                html += '</tr>';
-
-                $('#checks').find('tbody').append(html);
-            },
-
-            onAddService: function (service) {
-
-                console.log('adding service ' + service.get('name'));
-
-                // add a header
-                $('#checks').find('thead tr').append('<th>' + service.get('glyph') + '</th>');
-
-                // add a column to each env
-                // factor this so we only do it in one place
-                $('.env').each(function () {
-                    $(this).append('<td class="service-' + service.cid + '"><span class="errorFlag"></span></td>');
-                });
-            },
-
             render: function () {
-                return this.$el.html(dashboard());
+                // clean up in case render has already been called
+                this.stopListening();
+
+                // add html skeleton and establish subviews
+                this.$el.html(dashboard());
+                this._makeSummaryView();
+                this._makeTableView();
+
+                // set overall happiness and listen for future changes
+                this._setHappy();
+                this.listenTo(this.model, 'change:happy', this._setHappy);
+
+                return this.$el;
+            },
+
+            /**
+             * Update the class on the dashboard root element according to happiness.
+             */
+            _setHappy: function (ishappy) {
+                this.$el
+                    .removeClass('happy unhappy')
+                    .addClass(this.model.get('happy') ? 'happy' : 'unhappy');
+            },
+
+            _makeSummaryView: function ()  {
+                if (this.summaryView) {
+                    this.summaryView.remove();
+                }
+                this.summaryView = new HappinessSummaryView({
+                    model: this.model
+                });
+                this.$('.summary').html(this.summaryView.render());
+            },
+
+            _makeTableView: function () {
+                if (this.tableView) {
+                    this.tableView.remove();
+                }
+                this.tableView = new ProcessTableView({
+                    model: this.model
+                });
+                this.$('.processTable').html(this.tableView.render());
             }
 
         });

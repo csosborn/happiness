@@ -3,44 +3,59 @@
  * 1/10/15
  */
 
-define([ 'backbone' ], function (Backbone) {
+define(
+    [ 'backbone', 'models/ConfigCollection', 'models/ProcessCollection' ], 
+    function (Backbone, ConfigCollection, ProcessCollection) {
     "use strict";
-
-    /**
-     * A model class for configuration objects indexed by name.
-     */
-    var ConfigObject = Backbone.Model.extend({
-        idAttribute: 'name'
-    });
-
-    /**
-     * A collection class for configuration objects.
-     */ 
-    var ConfigCollection = Backbone.Collection.extend({
-        model: ConfigObject
-    });
-
 
     var System = Backbone.Model.extend({
 
         initialize: function (options) {
+            this.set('happy', true); // we start happy
+
             this.environments = new ConfigCollection();
             this.services = new ConfigCollection();
+            this.processes = new ProcessCollection();
         },
 
         addConfig: function (config) {
             switch (config.type) {
                 case 'environment':
-                    this.environments.add(config);
+                    this._addEnvironment(config);
                     break;
                 case 'service':
-                    this.services.add(config);
+                    this._addService(config);
                     break;
             }
-
         },
 
-        setError: function (env, service, message) {
+        _addEnvironment: function (config) {
+            var newEnvironment = this.environments.add(config);
+            this.services.each(
+                function (service) {
+                    this.processes.add({
+                        environment: newEnvironment,
+                        service: service
+                    });
+                },
+                this
+            );
+        },
+
+        _addService: function (config) {
+            var newService = this.services.add(config);
+            this.environments.each(
+                function (environment) {
+                    this.processes.add({
+                        environment: environment,
+                        service: newService
+                    });
+                },
+                this
+            );
+        },
+
+        addAlert: function (env, service, message) {
             var env = this.environments.get(env);
             var service = this.services.get(service);
         }
