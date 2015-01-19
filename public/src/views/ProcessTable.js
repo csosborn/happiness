@@ -58,13 +58,13 @@ define(
 
                 this.model.environments.each(
                     function (environment) {
-                        this._populateIntersection(environment, service);
+                        this._createIntersectionCell(environment, service);
                     },
                     this
                 );
             },
 
-            _populateIntersection: function (environment, service) {
+            _createIntersectionCell: function (environment, service) {
                 var row = this.$('tr[data-environment-cid='+environment.cid+']');
                 if (!row.find('td[data-service-cid=' + service.cid + ']').size()) {
                     row.append(

@@ -35,7 +35,7 @@ define(
             /**
              * Update the class on the dashboard root element according to happiness.
              */
-            _setHappy: function (ishappy) {
+            _setHappy: function () {
                 this.$el
                     .removeClass('happy unhappy')
                     .addClass(this.model.get('happy') ? 'happy' : 'unhappy');
