@@ -1,0 +1,5 @@
+{
+    "alarms": {
+        "xx": {"service": "frisk", "env": "production", "name": "queue too deep"}
+    }
+}
