@@ -1,11 +1,14 @@
-define(['backbone'], function (Backbone) {
+define(['underscore', 'backbone'], function (_, Backbone) {
 
     /**
-     * A model class for configuration objects indexed by name.
+     * A model class for configuration objects indexed by lowercase name.
      */
     var ConfigObject = Backbone.Model.extend({
-        idAttribute: 'name',
         
+        initialize: function (attributes) {
+            this.set('id', attributes.name.toLowerCase());
+        },
+
         getName: function ()  {
             return this.get('name');
         }

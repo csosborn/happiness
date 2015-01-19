@@ -55,9 +55,11 @@ define(
             );
         },
 
-        addAlert: function (env, service, message) {
-            var env = this.environments.get(env);
-            var service = this.services.get(service);
+        addAlert: function (environmentId, serviceId, message) {
+            var environment = this.environments.get(environmentId.toLowerCase());
+            var service = this.services.get(serviceId.toLowerCase());
+            var process = this.processes.findProcess(environment, service);
+            process.addAlert(message);
         }
 
     });

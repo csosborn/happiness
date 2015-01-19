@@ -4,16 +4,23 @@
  */
 
 define(
-	[ 'backbone' ],
-	function (Backbone) {
+	[ 'backbone', 'hbs!templates/processCell' ],
+	function (Backbone, processCellTemplate) {
 
 		return Backbone.View.extend({
 
+			initialize: function ()  {
+				this.listenTo(this.model, "change", this.render);
+			},
+
 			render: function () {
+				return this.$el.html(processCellTemplate(this.getTemplateData()));
+			},
 
-				this.$el.html(this.model.getName());
-
-				return this.$el;
+			getTemplateData: function () {
+				return {
+					eventCount: this.model.getPendingEventCount()
+				}
 			}
 
 		});

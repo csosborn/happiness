@@ -1,26 +1,46 @@
 define(
-	['backbone'], 
-	function (Backbone) {
+    ['backbone'], 
+    function (Backbone) {
 
-	var Process = Backbone.Model.extend({
+    var Process = Backbone.Model.extend({
 
-		getName: function ()  {
-			return this.getService().getName() + '-' + this.getEnvironment().getName();
-		},
+        initialize: function () {
+            // construct a compound primary key using the environment and service cids
+            this.set('id', this.getEnvironment().cid + '-' + this.getService().cid);
+            this.events = new Backbone.Collection();
+        },
 
-		getService: function () {
-			return this.get('service');
-		},
+        getName: function ()  {
+            return this.getEnvironment().getName() + '-' + this.getService().getName();
+        },
 
-		getEnvironment: function () { 
-			return this.get('environment');
-		}
+        getService: function () {
+            return this.get('service');
+        },
 
-	});
+        getEnvironment: function () { 
+            return this.get('environment');
+        },
+
+        addAlert: function (event) {
+            this.events.add(event);
+            this.trigger('change');
+        },
+
+        getPendingEventCount: function () {
+            return this.events.length;
+        }
+
+    });
 
 
-	return Backbone.Collection.extend({
-		model: Process
-	});
+    return Backbone.Collection.extend({
+        model: Process,
+
+        findProcess: function (environment, service) {
+            return this.get(environment.cid + "-" + service.cid);
+        }
+
+    });
 
 });

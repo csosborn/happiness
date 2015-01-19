@@ -15,9 +15,9 @@ define([ "socketio", "System", "views/Dashboard" ], function (io, System, Dashbo
         system.addConfig(config);
     });
 
-    socket.on('alert', function (item) {
-        console.log(item);
-        system.addAlert(item.environment, item.service, item.message);
+    socket.on('alert', function (alert) {
+        console.log(alert);
+        system.addAlert(alert.environment, alert.service, alert);
     });
 
 });
