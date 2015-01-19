@@ -1,10 +1,24 @@
-var when = require('when');
-var _ = require('underscore');
-var EventEmitter = require('events').EventEmitter;
+/**
+ * Created by: csosborn
+ * 1/11/15
+ */
 
 "use strict";
 
-var __ = function (configOptions) {
+var when = require('when');
+var _ = require('underscore');
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/**
+ *
+ * @param emitter
+ * @private
+ */
+var __ = function (emitter) {
+
+    this.emit = emitter.emit.bind(emitter);
+    this.numAlerts = 0;
+    this.alerts = {};
 
 	this.services = [
 		{ type: "service", name: "Glaze", glyph: "&#x1F369;" },
@@ -21,13 +35,9 @@ var __ = function (configOptions) {
 		{ type: "environment", name: "Investor" },
 		{ type: "environment", name: "Corral" }
 	];
-
-	this.errors = [];
-
-	this.newsEmitter = new EventEmitter();
-
-//	setInterval(_.bind(this._simulateError, this), 100);
 };
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 __.prototype.getServices = function ()  {
 	return when(this.services);	
@@ -37,25 +47,48 @@ __.prototype.getEnvironments = function ()  {
 	return when(this.environments);
 };
 
-__.prototype.getErrors = function ()  {
-	return when(this.errors);
+__.prototype.getAlerts = function ()  {
+	return _.values(this.alerts);
 };
 
-__.prototype.getNews = function () {
-	return this.newsEmitter;
-};
-
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /**
- * Ingests an array of events.
+ * Creates an alert.
  *
+ * @param service
+ * @param env
+ * @param name
  * @param events
  */
-__.prototype.ingest = function (event) {
+__.prototype.createAlert = function (service, env, name, events) {
 
-    this.newsEmitter.emit('serviceError', event);
-    this.errors.push(event);
-    console.log(event);
+    var id = this.numAlerts;
+    this.numAlerts++;
+
+    var alert = {
+        id: id,
+        service: service,
+        environment: env,
+        name: name,
+        events: events
+    };
+
+    this.alerts[id] = alert;
+    this.emit('alert', alert);
+
+    console.log(alert);
 };
 
-// Singleton :-(
-module.exports = new __();
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/**
+ * Dismisses the specified alert.
+ *
+ * @param id
+ */
+__.prototype.dismissAlert = function (id) {
+
+    delete this.alerts[id];
+};
+
+
+module.exports = __;

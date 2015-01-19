@@ -6,12 +6,12 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var _ = require('underscore');
 var when = require('when');
+var CONFIG = require('./config');
 
-var routes = require('./routes/index');
-var ingest = require('./routes/ingest');
-var update = require('./routes/update');
+var System = require('./models/System');
+var KeyStore = require('./models/KeyStore');
 
-var System = require('./models/System.js');
+var AlertController = require('./controllers/Alert');
 
 var app = express();
 
@@ -19,6 +19,10 @@ var app = express();
 var server = require('http').Server(app);
 var io = require('socket.io')(server);
 app.set('server', server); // this is backwards and dumb but I don't see an obvious better solution right now
+
+var system = new System(io);
+var keyStore = new KeyStore(require('./keys.json'));
+var alertController = new AlertController(system, keyStore);
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -32,18 +36,16 @@ app.use(cookieParser());
 app.use(require('less-middleware')(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', routes);
-app.use('/ingest', ingest);
-app.use('/update', update);
+app.use('/alert', alertController.getRouter());
 
-/// catch 404 and forward to error handler
+// catch 404 and forward to error handler
 app.use(function(req, res, next) {
     var err = new Error('Not Found');
     err.status = 404;
     next(err);
 });
 
-/// error handlers
+// error handlers
 
 // development error handler
 // will print stacktrace
@@ -67,26 +69,21 @@ app.use(function(err, req, res, next) {
     });
 });
 
-var systemConfig = {};
-
+// todo clean this up
 io.on('connection', function (socket) {
     console.log("connected!");
 
-    when.all([System.getEnvironments(), System.getServices(), System.getErrors()]).spread(
-        function (environments, services, errors) {
+    when.all([system.getEnvironments(), system.getServices(), system.getAlerts()]).spread(
+        function (environments, services, alerts) {
             _.each(_.flatten([environments, services]), function(object) {
                 socket.emit('config', object);
             });
-            _.each(_.flatten(errors), function(object) {
-                socket.emit('news', object);
+            _.each(_.flatten(alerts), function(object) {
+                socket.emit('alert', object);
             });
         }
     );
 
-});
-
-System.getNews().on('serviceError', function(obj) {
-    io.emit('news', obj);
 });
 
 

@@ -1,6 +1,8 @@
 /**
  * Created by: spurcell
  * 1/11/15
+ *
+ * todo use the extra content in the papertrail message - link to context etc.
  */
 
 "use strict";
@@ -17,16 +19,7 @@ var process = function (req) {
 
     var payload = JSON.parse(req.body.payload);
 
-    return payload.events.map(function (event) {
-
-        console.log("received papertrail event: " + util.inspect(event, {depth: null}));
-
-        return {
-            environment: req.params.env,
-            service: event.program,
-            message: event.message
-        };
-    });
+    return payload.events;
 };
 
 module.exports = process;
